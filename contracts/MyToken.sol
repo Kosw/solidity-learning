@@ -7,19 +7,24 @@ contract MyToken {
 
     uint256 public totalSupply;
     mapping(address => uint256) public balanceOf;
-    mapping(address => mapping(address => uint256)) public allowance;
 
-    constructor(string memory _name, string memory _symbol, uint8 _decimals) {
+    constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _amount) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
-        _mint(1*10**uint256(decimals), msg.sender);
+        _mint(_amount*10**uint256(decimals), msg.sender);
 
     }
 
     function _mint(uint256 amount, address owner) internal {
         totalSupply += amount;
         balanceOf[owner] += amount;
+    }
+
+    function transfer(address to, uint256 amount) external {
+        require(balanceOf[msg.sender] >= amount, "Insufficient balance");
+        balanceOf[msg.sender] -= amount;
+        balanceOf[to] += amount;
     }
 
     // function totalSupply() external view returns (uint256) {
