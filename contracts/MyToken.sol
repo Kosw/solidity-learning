@@ -1,6 +1,7 @@
 pragma solidity ^0.8.28;
+import "./ManagedAccess.sol";
 
-contract MyToken {
+contract MyToken is ManagedAccess {
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed spender, uint256 amount);
 
@@ -13,7 +14,8 @@ contract MyToken {
     mapping(address => mapping(address => uint256)) public allowance;
     
 
-    constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _amount) {
+    constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _amount
+    ) ManagedAccess(msg.sender, msg.sender) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
@@ -35,15 +37,19 @@ contract MyToken {
         emit Transfer(from, to, amount);
     }
 
-    function mint(uint256 amount, address owner) external {
-        _mint(amount, owner);
+    function mint(uint256 amount, address to) external onlyManager{
+        _mint(amount, to);
     }
 
-    function _mint(uint256 amount, address owner) internal {
-        totalSupply += amount;
-        balanceOf[owner] += amount;
+    function setManager(address _manager) external onlyOwner{
+        manager = _manager;
+    }
 
-        emit Transfer(address(0), owner, amount);
+    function _mint(uint256 amount, address to) internal {
+        totalSupply += amount;
+        balanceOf[to] += amount;
+
+        emit Transfer(address(0), to, amount);
     }
 
     function transfer(address to, uint256 amount) external {
