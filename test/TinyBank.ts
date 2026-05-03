@@ -76,7 +76,7 @@ describe("TinyBank", () => {
         });
 
         it("should revert when changing rewardperblock by hacker", async () => {
-            const hacker = signers[2];
+            const hacker = signers[3];
             const rewardToChange = hre.ethers.parseUnits("10000", DECIMALS);
             await expect(
                 tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange)
